@@ -20,7 +20,7 @@ const ProtectedLayout = () => {
     }, [navigate])
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full relative">
             <Header>
                 <Navigation />
             </Header>
