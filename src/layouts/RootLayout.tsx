@@ -3,7 +3,7 @@ import { Toaster } from "sonner"
 
 const RootLayout = () => {
     return (
-        <div className="min-h-screen h-full w-full">
+        <div className="h-screen w-full">
             <Toaster />
             <Outlet />
         </div>
