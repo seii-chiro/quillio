@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { Outlet, useNavigate } from "react-router"
 import { supabase } from "../supabaseClient";
+import Header from "../components/Header";
+import Navigation from "../components/Navigation";
 
 const ProtectedLayout = () => {
     const navigate = useNavigate();
@@ -17,7 +19,16 @@ const ProtectedLayout = () => {
         checkSession();
     }, [navigate])
 
-    return <Outlet />
+    return (
+        <div className="w-full h-full">
+            <Header>
+                <Navigation />
+            </Header>
+            <main>
+                <Outlet />
+            </main>
+        </div>
+    )
 }
 
 export default ProtectedLayout
