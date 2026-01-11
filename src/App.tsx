@@ -5,6 +5,8 @@ import ProtectedLayout from "./layouts/ProtectedLayout"
 import "./App.css"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import MyBlogs from "./pages/MyBlogs"
+import Settings from "./pages/Settings"
 
 const App = () => {
   const router = createBrowserRouter([
@@ -18,6 +20,14 @@ const App = () => {
             {
               index: true,
               element: <Home />
+            },
+            {
+              path: "my-blogs",
+              element: <MyBlogs />
+            },
+            {
+              path: "settings",
+              element: <Settings />
             }
           ]
         },
