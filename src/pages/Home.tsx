@@ -28,11 +28,14 @@ function Home() {
     }, []);
 
     return (
-        <ul>
-            {blogs.map((blog) => (
-                <li key={blog.title}>{blog.body}</li>
-            ))}
-        </ul>
+        <>
+            <h1 className="text-xl font-bold text-blue-300">Hello</h1>
+            <ul>
+                {blogs.map((blog) => (
+                    <li key={blog.title}>{blog.body}</li>
+                ))}
+            </ul>
+        </>
     );
 }
 
