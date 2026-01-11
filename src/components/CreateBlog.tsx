@@ -59,13 +59,12 @@ const CreateBlog = () => {
                             setBlogEntry({ ...blogEntry, title: e.target.value || "" })
                         }}
                     />
-                    <p className="text-xs text-slate-400 mt-1">Keep it under 100 characters</p>
                 </InputLabelGroup>
 
                 <InputLabelGroup>
                     <label htmlFor="blog-body" className="text-sm font-medium text-slate-700">Body</label>
                     <textarea
-                        className="w-full min-h-[8rem] border border-gray-200 rounded-md px-3 py-2 resize-y focus:outline-none focus:ring-0 focus:border-black"
+                        className="w-full min-h-32 border border-gray-200 rounded-md px-3 py-2 resize-y focus:outline-none focus:ring-0 focus:border-black"
                         id="blog-body"
                         placeholder="Write your blog here..."
                         value={blogEntry.body}
@@ -74,7 +73,6 @@ const CreateBlog = () => {
                         }}
                     />
                     <div className="flex justify-between items-center mt-1 text-xs text-slate-400">
-                        <span>Markdown and links supported</span>
                         <span>{blogEntry.body.length} chars</span>
                     </div>
                 </InputLabelGroup>
