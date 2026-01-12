@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import type { Blog } from "../types/blogs";
-
-type BlogWithAuthor = Blog & { author: { display_name: string | null } };
+import type { BlogWithAuthor } from "../types/blogs";
+import BlogCard from "../components/BlogCard";
 
 function Home() {
     const [blogs, setBlogs] = useState<BlogWithAuthor[]>([]);
@@ -24,14 +23,18 @@ function Home() {
     }, []);
 
     return (
-        <>
-            <h1 className="text-xl font-bold text-blue-300">Hello</h1>
-            <ul>
-                {blogs.map((blog) => (
-                    <li key={blog.title}>{blog.body}</li>
-                ))}
-            </ul>
-        </>
+        <div className="flex flex-col gap-6 mt-8 mb-16">
+            <h1 className="text-center text-2xl font-bold">Feed</h1>
+            <div className="flex flex-col gap-4 w-full items-center justify-center">
+                <ul className="w-[60%]">
+                    {blogs.map((blog) => (
+                        <li key={blog.id}>
+                            <BlogCard blog={blog} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
     );
 }
 
