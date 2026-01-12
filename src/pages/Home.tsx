@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import type { Blog } from "../types/blogs";
 
+type BlogWithAuthor = Blog & { author: { display_name: string | null } };
 
 function Home() {
-    const [blogs, setBlogs] = useState<Blog[]>([]);
+    const [blogs, setBlogs] = useState<BlogWithAuthor[]>([]);
 
-    async function getBlogs() {
-        const { data } = await supabase.from("blogs").select("*").range(0, 9);
+    async function getBlogs(): Promise<BlogWithAuthor[] | null> {
+        const { data } = await supabase.from("blogs").select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`).range(0, 9);
         return data;
     }
 
@@ -19,6 +20,7 @@ function Home() {
             .catch((error) => {
                 console.error("Failed to load blogs", error);
             });
+
     }, []);
 
     return (
