@@ -25,8 +25,8 @@ function Home() {
     return (
         <div className="flex flex-col gap-6 mt-8 mb-16">
             <h1 className="text-center text-2xl font-bold">Feed</h1>
-            <div className="flex flex-col gap-4 w-full items-center justify-center">
-                <ul className="w-[60%]">
+            <div className="flex flex-col w-full items-center justify-center">
+                <ul className="w-[60%] flex flex-col gap-4">
                     {blogs.map((blog) => (
                         <li key={blog.id}>
                             <BlogCard blog={blog} />
