@@ -6,7 +6,6 @@ import "./App.css"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import MyBlogs from "./pages/MyBlogs"
-import Settings from "./pages/Settings"
 
 const App = () => {
   const router = createBrowserRouter([
@@ -24,10 +23,6 @@ const App = () => {
             {
               path: "my-blogs",
               element: <MyBlogs />
-            },
-            {
-              path: "settings",
-              element: <Settings />
             }
           ]
         },
