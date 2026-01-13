@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Outlet, useNavigate } from "react-router"
 import { supabase } from "../supabaseClient";
 import Header from "../components/Header";
@@ -14,6 +14,7 @@ const ProtectedLayout = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const userHasProfile = useAppSelector((state) => state.userHasProfile.value);
+    const [isCheckingProfile, setIsCheckingProfile] = useState(true);
 
     useEffect(() => {
         let user: User | null = null
@@ -34,15 +35,16 @@ const ProtectedLayout = () => {
         const checkUserProfile = async () => {
             if (!user) return
 
-            const { data, error } = await supabase
+            const { data, error, } = await supabase
                 .from('profile')
                 .select("*")
-                .eq('user_id', user?.id)
+                .eq('id', user?.id)
 
             if (error) {
                 toast.error(error.message)
                 dispatch(setUserHasProfile(false));
             }
+
 
             if (data && data.length > 0) {
                 toast.success(`Hello, ${data[0]?.display_name || 'user'}!`);
@@ -52,8 +54,13 @@ const ProtectedLayout = () => {
             }
         }
 
-        checkSession();
-        checkUserProfile();
+        const runChecks = async () => {
+            await checkSession();
+            await checkUserProfile();
+            setIsCheckingProfile(false);
+        }
+
+        runChecks();
     }, [navigate, dispatch])
 
     return (
@@ -65,7 +72,7 @@ const ProtectedLayout = () => {
                 <Outlet />
             </main>
 
-            <SetProfileModal isOpen={!userHasProfile} onRequestClose={() => dispatch(setUserHasProfile(true))} />
+            <SetProfileModal isOpen={!isCheckingProfile && !userHasProfile} onRequestClose={() => dispatch(setUserHasProfile(true))} />
         </div>
     )
 }
