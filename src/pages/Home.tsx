@@ -3,24 +3,41 @@ import { supabase } from "../supabaseClient";
 import type { BlogWithAuthor } from "../types/blogs";
 import BlogCard from "../components/BlogCard";
 
+const PAGE_SIZE = 10;
+
 function Home() {
     const [blogs, setBlogs] = useState<BlogWithAuthor[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
-    async function getBlogs(): Promise<BlogWithAuthor[] | null> {
-        const { data } = await supabase.from("blogs").select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`).eq('only_me', false).range(0, 9);
+    async function getBlogs(page: number): Promise<BlogWithAuthor[] | null> {
+        const start = page * PAGE_SIZE;
+        const end = start + PAGE_SIZE - 1;
+        const { data } = await supabase
+            .from("blogs")
+            .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
+            .eq('only_me', false)
+            .range(start, end);
         return data;
     }
 
     useEffect(() => {
-        getBlogs()
-            .then((data) => {
+        async function loadBlogs(page: number) {
+            setIsLoading(true);
+            try {
+                const data = await getBlogs(page);
                 setBlogs(data || []);
-            })
-            .catch((error) => {
+                setHasMore(data ? data.length === PAGE_SIZE : false);
+            } catch (error) {
                 console.error("Failed to load blogs", error);
-            });
+            } finally {
+                setIsLoading(false);
+            }
+        }
 
-    }, []);
+        loadBlogs(currentPage);
+    }, [currentPage]);
 
     return (
         <div className="w-full flex flex-col gap-6 mt-8 mb-16">
@@ -33,6 +50,36 @@ function Home() {
                         </li>
                     ))}
                 </ul>
+
+                {isLoading && (
+                    <p className="text-center text-gray-500 mt-4">Loading...</p>
+                )}
+
+                {blogs.length === 0 && !isLoading && (
+                    <p className="text-center text-gray-500 mt-4">No blogs found</p>
+                )}
+
+                <div className="flex gap-4 items-center justify-center mt-8">
+                    <button
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                        disabled={currentPage === 0 || isLoading}
+                        className="w-28 px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+                    >
+                        Previous
+                    </button>
+
+                    <span className="text-sm text-gray-600">
+                        Page {currentPage + 1}
+                    </span>
+
+                    <button
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        disabled={!hasMore || isLoading}
+                        className="w-28 px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );
