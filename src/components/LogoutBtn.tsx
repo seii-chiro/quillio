@@ -4,6 +4,9 @@ import { toast } from "sonner";
 import { useState } from "react";
 import Modal from 'react-modal'
 import { useNavigate } from "react-router";
+import { useAppDispatch } from "../hooks/store-hooks";
+import { setUserHasProfile } from "../slice/userHasProfileSlice";
+import { clearUser } from "../slice/userSlice";
 
 
 Modal.setAppElement('#root')
@@ -31,6 +34,7 @@ const customStyles: Modal.Styles = {
 const LogoutBtn = () => {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut();
@@ -39,6 +43,9 @@ const LogoutBtn = () => {
             toast.error(error.message);
             return
         }
+
+        dispatch(setUserHasProfile(false));
+        dispatch(clearUser())
 
         navigate('/login');
     }
