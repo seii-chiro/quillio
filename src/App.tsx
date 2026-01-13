@@ -40,7 +40,7 @@ const App = () => {
       path: "*",
       element: <div>404 Not Found</div>
     }
-  ])
+  ], { basename: "/quillio" })
 
   return (
     <RouterProvider router={router} />
