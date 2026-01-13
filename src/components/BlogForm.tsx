@@ -1,15 +1,24 @@
 import type { BlogInsert } from "../types/blogs"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import StyledInput from "./styled-input"
 import InputLabelGroup from "./input-label-goup"
 import { supabase } from "../supabaseClient"
 import { toast } from "sonner"
 import FormSubmitButton from "./styled-submit-btn"
+import { reloadWindow } from "../utils/reloadWindow"
 
-const CreateBlog = () => {
-    const [blogEntry, setBlogEntry] = useState<BlogInsert>({ title: "", body: "" })
+type CreateBlogProps = {
+    id?: number;
+    title?: string;
+    body?: string;
+    only_me?: boolean;
+    isEditing?: boolean;
+    onClose: () => void;
+}
+
+const BlogForm = ({ id, title = "", body = "", only_me = false, isEditing = false, onClose }: CreateBlogProps) => {
+    const [blogEntry, setBlogEntry] = useState<BlogInsert>({ title: title, body: body, only_me: only_me })
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const titleRef = useRef<HTMLInputElement | null>(null)
 
     const handleFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -20,24 +29,52 @@ const CreateBlog = () => {
 
         setIsSubmitting(true)
 
-        const { error } = await supabase
-            .from('blogs')
-            .insert([
-                { title: blogEntry?.title || "", body: blogEntry?.body || "" },
-            ])
-            .select()
+        if (isEditing) {
+            if (id === undefined || id === null) {
+                toast.error("Blog ID is missing for editing")
+                setIsSubmitting(false)
+                return
+            }
 
-        setIsSubmitting(false)
+            const { error } = await supabase
+                .from('blogs')
+                .update({ "title": blogEntry.title, "body": blogEntry.body, "only_me": blogEntry.only_me })
+                .eq('id', id)
+                .select()
 
-        if (error) {
-            toast.error(error.message)
+            setIsSubmitting(false)
+            if (error) {
+                toast.error(error.message)
+            } else {
+                toast.success("Blog updated successfully")
+                setBlogEntry({ title: "", body: "" })
+                onClose()
+                reloadWindow()
+            }
+            return
         } else {
-            toast.success("Blog created successfully")
-            setBlogEntry({ title: "", body: "" })
-            titleRef.current?.focus()
+            const { error } = await supabase
+                .from('blogs')
+                .insert([
+                    { title: blogEntry?.title || "", body: blogEntry?.body || "" },
+                ])
+                .select()
+
+            if (error) {
+                toast.error(error.message)
+            } else {
+                setIsSubmitting(false)
+                toast.success("Blog created successfully")
+                setBlogEntry({ title: "", body: "" })
+                onClose()
+                reloadWindow()
+            }
         }
 
     }
+
+    const btnLabel = isEditing ? "Update Blog" : "Create Blog"
+    const btnLabelSubmitting = isEditing ? "Updating…" : "Creating…"
 
 
     return (
@@ -52,7 +89,6 @@ const CreateBlog = () => {
                     <label htmlFor="blog-title" className="text-sm font-medium text-slate-700">Title</label>
                     <StyledInput
                         id="blog-title"
-                        ref={titleRef}
                         placeholder="Short, descriptive title"
                         value={blogEntry.title}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,11 +110,17 @@ const CreateBlog = () => {
                     />
                     <div className="flex justify-between items-center mt-1 text-xs text-slate-400">
                         <span>{blogEntry.body.length} chars</span>
+                        <span className="flex gap-1 items-center">
+                            <input type="checkbox" checked={blogEntry.only_me} onChange={(e) => setBlogEntry({ ...blogEntry, only_me: e.target.checked })} />
+                            <span className="ml-1">Private</span>
+                        </span>
                     </div>
                 </InputLabelGroup>
                 <div className="flex justify-end">
                     <FormSubmitButton>
-                        {isSubmitting ? 'Creating…' : 'Create Blog'}
+                        {
+                            isSubmitting ? btnLabelSubmitting : btnLabel
+                        }
                     </FormSubmitButton>
                 </div>
             </form>
@@ -86,4 +128,4 @@ const CreateBlog = () => {
     )
 }
 
-export default CreateBlog
+export default BlogForm
