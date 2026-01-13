@@ -15,8 +15,6 @@ const ProtectedLayout = () => {
     const dispatch = useAppDispatch();
     const userHasProfile = useAppSelector((state) => state.userHasProfile.value);
 
-    console.log(userHasProfile)
-
     useEffect(() => {
         let user: User | null = null
 
@@ -43,11 +41,14 @@ const ProtectedLayout = () => {
 
             if (error) {
                 toast.error(error.message)
+                dispatch(setUserHasProfile(false));
             }
 
             if (data && data.length > 0) {
                 toast.success(`Hello, ${data[0]?.display_name || 'user'}!`);
                 dispatch(setUserHasProfile(true));
+            } else {
+                dispatch(setUserHasProfile(false));
             }
         }
 

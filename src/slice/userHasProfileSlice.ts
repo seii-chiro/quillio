@@ -5,7 +5,7 @@ type UserHasProfileState = {
 };
 
 const initialState: UserHasProfileState = {
-  value: false,
+  value: true,
 };
 
 const userHasProfileSlice = createSlice({
