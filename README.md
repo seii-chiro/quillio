@@ -15,8 +15,6 @@ Quillio is a small blog app built with **React**, **TypeScript**, **Vite**, and 
 - **Project structure**
 - **Development notes**
 - **Testing & Deployment**
-- **Contributing**
-- **License
 
 ---
 
@@ -105,22 +103,4 @@ These scripts are defined in `package.json` and are the standard Vite + TypeScri
 npm run build
 ```
 
-Host the generated `dist/` output on any static hosting platform (Netlify, Vercel, Cloudflare Pages, etc.). Ensure the production environment variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) are set in your deployment platform.
 
-## Contributing
-
-Contributions are welcome. Suggested workflow:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make changes and add tests if applicable
-4. Run `npm run lint` and ensure type checks pass
-5. Open a PR with a clear description of the change
-
-## License
-
-Add a license file (for example `LICENSE`) and update this section accordingly.
-
----
-
-If you'd like, I can add a `CONTRIBUTING.md`, CI configuration, or sections for deployment provider examples.
