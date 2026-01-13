@@ -1,10 +1,9 @@
-import { IoMdLogOut } from "react-icons/io";
 import { supabase } from "../supabaseClient";
 import { toast } from "sonner";
 import { useState } from "react";
 import Modal from 'react-modal'
-import { useNavigate } from "react-router";
-
+import { IoTrashOutline } from "react-icons/io5";
+import { reloadWindow } from "../utils/reloadWindow";
 
 Modal.setAppElement('#root')
 
@@ -28,19 +27,28 @@ const customStyles: Modal.Styles = {
     },
 };
 
-const LogoutBtn = () => {
+type ConfirmDeleteBlogBtnProps = {
+    blogId: number;
+}
+
+const ConfirmDeleteBlogBtn = ({ blogId }: ConfirmDeleteBlogBtnProps) => {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const navigate = useNavigate();
 
     const handleLogout = async () => {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabase
+            .from('blogs')
+            .delete()
+            .eq('id', blogId)
+            .select();
 
         if (error) {
             toast.error(error.message);
             return
         }
 
-        navigate('/login');
+        setShowConfirmDialog(false);
+        toast.success("Blog deleted successfully");
+        reloadWindow()
     }
 
     return (
@@ -50,23 +58,23 @@ const LogoutBtn = () => {
                 type="button"
                 onClick={() => setShowConfirmDialog(true)}
             >
-                <IoMdLogOut size={24} />
+                <IoTrashOutline className="text-red-600 hover:text-red-800 cursor-pointer" size={20} />
             </button>
             <Modal
                 isOpen={showConfirmDialog}
                 onRequestClose={() => setShowConfirmDialog(false)}
                 style={customStyles}
-                contentLabel="Confirm logout"
+                contentLabel="Confirm delete blog"
             >
                 <div className="space-y-4">
-                    <p className="text-slate-700">Are you sure you want to log out?</p>
+                    <p className="text-slate-700">Are you sure you want to delete this blog?</p>
 
                     <div className="flex justify-end gap-3">
                         <button
                             className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                             onClick={handleLogout}
                         >
-                            Yes, log out
+                            Yes, delete
                         </button>
 
                         <button
@@ -82,4 +90,4 @@ const LogoutBtn = () => {
     )
 }
 
-export default LogoutBtn
+export default ConfirmDeleteBlogBtn
