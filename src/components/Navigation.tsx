@@ -26,16 +26,6 @@ const Navigation = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink
-                        to="/settings"
-                        className={({ isActive }) =>
-                            isActive ? 'text-sky-600 pb-1 border-b-2 border-sky-600' : 'text-slate-700 hover:text-slate-900'
-                        }
-                    >
-                        Settings
-                    </NavLink>
-                </li>
-                <li>
                     <LogoutBtn />
                 </li>
             </ul>
