@@ -5,7 +5,7 @@ import { useState } from "react";
 import Modal from 'react-modal'
 import { useNavigate } from "react-router";
 
-// Ensure accessibility - point to your app root element
+
 Modal.setAppElement('#root')
 
 const customStyles: Modal.Styles = {
