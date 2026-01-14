@@ -9,12 +9,16 @@ import type { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import SetProfileModal from "../components/SetProfileModal";
 import { setUserHasProfile } from "../slice/userHasProfileSlice";
+import type { Profile } from "../types/profile";
+import HeaderProfile from "../components/HeaderProfile";
 
 const ProtectedLayout = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const userHasProfile = useAppSelector((state) => state.userHasProfile.value);
     const [isCheckingProfile, setIsCheckingProfile] = useState(true);
+    const [userProfile, setUserProfile] = useState<Profile | null>(null);
+    const [hasShownToast, setHasShownToast] = useState(false);
 
     useEffect(() => {
         const checkSession = async () => {
@@ -40,14 +44,21 @@ const ProtectedLayout = () => {
                 .single();
 
             if (error) {
-                toast.error(error.message)
+                if (!hasShownToast) {
+                    toast.error(error.message)
+                    setHasShownToast(true)
+                }
                 dispatch(setUserHasProfile(false));
                 return
             }
 
 
             if (data) {
-                toast.success(`Hello, ${data?.display_name || 'user'}!`);
+                if (!hasShownToast) {
+                    toast.success(`Hello, ${data?.display_name || 'user'}!`);
+                    setHasShownToast(true)
+                }
+                setUserProfile(data)
                 dispatch(setUserHasProfile(true));
             } else {
                 dispatch(setUserHasProfile(false));
@@ -61,12 +72,13 @@ const ProtectedLayout = () => {
         }
 
         runChecks();
-    }, [navigate, dispatch])
+    }, [navigate, dispatch, hasShownToast])
 
     return (
         <div className="w-full h-full flex flex-col items-center relative">
             <Header>
                 <Navigation />
+                <HeaderProfile userProfile={userProfile} />
             </Header>
             <main className="w-[95%] lg:w-[60%] flex flex-col items-center">
                 <Outlet />
