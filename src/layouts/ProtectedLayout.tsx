@@ -17,37 +17,37 @@ const ProtectedLayout = () => {
     const [isCheckingProfile, setIsCheckingProfile] = useState(true);
 
     useEffect(() => {
-        let user: User | null = null
-
         const checkSession = async () => {
             const { data, error } = await supabase.auth.getSession();
 
             if (error || !data.session) {
                 navigate("/login");
-                return;
+                return null;
             }
 
             dispatch(setUser(data?.session?.user));
-            user = data?.session?.user;
+            return data?.session?.user;
         }
 
 
-        const checkUserProfile = async () => {
+        const checkUserProfile = async (user: User | null) => {
             if (!user) return
 
             const { data, error, } = await supabase
                 .from('profile')
                 .select("*")
                 .eq('id', user?.id)
+                .maybeSingle();
 
             if (error) {
                 toast.error(error.message)
                 dispatch(setUserHasProfile(false));
+                return
             }
 
 
-            if (data && data.length > 0) {
-                toast.success(`Hello, ${data[0]?.display_name || 'user'}!`);
+            if (data) {
+                toast.success(`Hello, ${data?.display_name || 'user'}!`);
                 dispatch(setUserHasProfile(true));
             } else {
                 dispatch(setUserHasProfile(false));
@@ -55,8 +55,8 @@ const ProtectedLayout = () => {
         }
 
         const runChecks = async () => {
-            await checkSession();
-            await checkUserProfile();
+            const user = await checkSession();
+            await checkUserProfile(user);
             setIsCheckingProfile(false);
         }
 
