@@ -25,7 +25,8 @@ const MyBlogs = () => {
                 .from("blogs")
                 .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
                 .eq('user_id', user?.id)
-                .range(start, end);
+                .range(start, end)
+                .order("created_at", { ascending: false });
             return data;
         }
 

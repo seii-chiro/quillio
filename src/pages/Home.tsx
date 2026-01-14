@@ -20,7 +20,8 @@ function Home() {
             .from("blogs")
             .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
             .eq('only_me', false)
-            .range(start, end);
+            .range(start, end)
+            .order("created_at", { ascending: false });
         return data;
     }
 
