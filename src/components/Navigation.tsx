@@ -1,5 +1,4 @@
 import { NavLink } from "react-router"
-import LogoutBtn from "./LogoutBtn"
 
 const Navigation = () => {
     return (
@@ -24,9 +23,6 @@ const Navigation = () => {
                     >
                         My Blogs
                     </NavLink>
-                </li>
-                <li>
-                    <LogoutBtn />
                 </li>
             </ul>
         </nav>

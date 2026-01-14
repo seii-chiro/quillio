@@ -8,11 +8,13 @@ import ConfirmDeleteBlogBtn from "./ConfirmDeleteBlogBtn";
 type BlogCardProps = {
     blog: BlogWithAuthor;
     isInMyBlogs?: boolean;
+    onBlogUpdated?: (blog: BlogWithAuthor) => void;
+    onBlogDeleted?: (blogId: number) => void;
 };
 
 
-const BlogCard = ({ blog, isInMyBlogs }: BlogCardProps) => {
-    const { title, author, created_at, body, only_me, id } = blog;
+const BlogCard = ({ blog, isInMyBlogs, onBlogUpdated, onBlogDeleted }: BlogCardProps) => {
+    const { title, author, created_at, body, only_me, id, image } = blog;
     const authorName = author?.display_name ?? "Unknown";
 
     return (
@@ -22,7 +24,7 @@ const BlogCard = ({ blog, isInMyBlogs }: BlogCardProps) => {
                     <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
                     {
                         isInMyBlogs && (
-                            <ConfirmDeleteBlogBtn blogId={blog.id} />
+                            <ConfirmDeleteBlogBtn blogId={blog.id} onBlogDeleted={onBlogDeleted} />
                         )
                     }
                 </div>
@@ -44,12 +46,18 @@ const BlogCard = ({ blog, isInMyBlogs }: BlogCardProps) => {
                 </div>
             </header>
 
+            {image && (
+                <div className="mt-4">
+                    <img src={image} alt={title} className="w-full h-48 object-cover rounded-md" />
+                </div>
+            )}
+
             <p className="mt-4 text-sm text-slate-700 line-clamp-3">{body}</p>
 
             <div className="mt-4 flex items-center justify-end gap-3">
                 {
                     isInMyBlogs && (
-                        <EditBlogModalBtn blog={blog} />
+                        <EditBlogModalBtn blog={blog} onBlogUpdated={onBlogUpdated} />
                     )
                 }
                 <Link to={`/blogs/${id}`} className="text-sm bg-sky-600 text-white px-3 py-1.5 rounded hover:bg-sky-700 transition">

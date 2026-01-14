@@ -14,6 +14,20 @@ const MyBlogs = () => {
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleBlogCreated = (newBlog: BlogWithAuthor) => {
+        setMyBlogs(prevBlogs => [newBlog, ...prevBlogs]);
+    };
+
+    const handleBlogUpdated = (updatedBlog: BlogWithAuthor) => {
+        setMyBlogs(prevBlogs =>
+            prevBlogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
+        );
+    };
+
+    const handleBlogDeleted = (blogId: number) => {
+        setMyBlogs(prevBlogs => prevBlogs.filter(blog => blog.id !== blogId));
+    };
+
 
     useEffect(() => {
         async function getBlogs(page: number): Promise<BlogWithAuthor[] | null> {
@@ -23,7 +37,7 @@ const MyBlogs = () => {
             const end = start + PAGE_SIZE - 1;
             const { data } = await supabase
                 .from("blogs")
-                .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
+                .select(`id, created_at, title, body, user_id, only_me, image, author:profile(display_name, avatar)`)
                 .eq('user_id', user?.id)
                 .range(start, end)
                 .order("created_at", { ascending: false });
@@ -50,25 +64,30 @@ const MyBlogs = () => {
         <div className="w-full flex flex-col gap-6 mt-8 mb-16">
             <div className='w-full flex justify-between items-center'>
                 <h2 className="text-2xl font-semibold text-center">My Blogs</h2>
-                <CreateBlogModalBtn />
+                <CreateBlogModalBtn onBlogCreated={handleBlogCreated} />
             </div>
 
             <div className="flex flex-col w-full items-center justify-center">
                 <ul className="w-full flex flex-col gap-4">
                     {myBlogs.map((blog) => (
                         <li key={blog.id}>
-                            <BlogCard blog={blog} isInMyBlogs={true} />
+                            <BlogCard
+                                blog={blog}
+                                isInMyBlogs={true}
+                                onBlogUpdated={handleBlogUpdated}
+                                onBlogDeleted={handleBlogDeleted}
+                            />
                         </li>
                     ))}
                 </ul>
 
 
                 {isLoading && (
-                    <p className="text-center text-gray-500 mt-4">Loading...</p>
+                    <p className="text-center mt-4">Loading...</p>
                 )}
 
                 {myBlogs.length === 0 && !isLoading && (
-                    <p className="text-center text-gray-500 mt-4">No blogs found</p>
+                    <p className="text-center mt-4">No blogs found</p>
                 )}
 
                 <div className="flex gap-4 items-center justify-center mt-8">

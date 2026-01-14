@@ -7,6 +7,7 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import MyBlogs from "./pages/MyBlogs"
 import ReadBlog from "./pages/ReadBlog"
+import Profile from "./pages/Profile"
 
 const App = () => {
   const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const App = () => {
               path: "my-blogs",
               element: <MyBlogs />
             },
+            {
+              path: "profile",
+              element: <Profile />
+            }
           ]
         },
         {
