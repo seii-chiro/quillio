@@ -18,7 +18,7 @@ function Home() {
         const end = start + PAGE_SIZE - 1;
         const { data } = await supabase
             .from("blogs")
-            .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
+            .select(`id, created_at, title, body, user_id, only_me, image, author:profile(display_name, avatar)`)
             .eq('only_me', false)
             .range(start, end)
             .order("created_at", { ascending: false });
@@ -63,11 +63,11 @@ function Home() {
                 </ul>
 
                 {isLoading && (
-                    <p className="text-center text-gray-500 mt-4">Loading...</p>
+                    <p className="text-center mt-4">Loading...</p>
                 )}
 
                 {blogs.length === 0 && !isLoading && (
-                    <p className="text-center text-gray-500 mt-4">No blogs found</p>
+                    <p className="text-center mt-4">No blogs found</p>
                 )}
 
                 <div className="flex gap-4 items-center justify-center mt-8">
