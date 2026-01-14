@@ -47,9 +47,8 @@ const MyBlogs = () => {
 
     return (
         <div className="w-full flex flex-col gap-6 mt-8 mb-16">
-            <div className='w-full flex justify-between'>
+            <div className='w-full flex justify-between items-center'>
                 <h2 className="text-2xl font-semibold text-center">My Blogs</h2>
-
                 <CreateBlogModalBtn />
             </div>
 
