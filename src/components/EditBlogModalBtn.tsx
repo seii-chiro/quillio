@@ -28,9 +28,10 @@ const customStyles: Modal.Styles = {
 
 type EditBlogModalBtnProps = {
     blog: BlogWithAuthor;
+    onBlogUpdated?: (blog: BlogWithAuthor) => void;
 }
 
-const EditBlogModalBtn = ({ blog }: EditBlogModalBtnProps) => {
+const EditBlogModalBtn = ({ blog, onBlogUpdated }: EditBlogModalBtnProps) => {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
     const handleCloseModal = () => {
@@ -61,7 +62,16 @@ const EditBlogModalBtn = ({ blog }: EditBlogModalBtnProps) => {
                             <MdOutlineCancel size={24} className="hover:text-red-600" />
                         </button>
                     </div>
-                    <BlogForm title={blog.title} body={blog.body} only_me={blog.only_me} isEditing={true} id={blog.id} onClose={handleCloseModal} />
+                    <BlogForm
+                        title={blog.title}
+                        body={blog.body}
+                        only_me={blog.only_me}
+                        image={blog.image}
+                        isEditing={true}
+                        id={blog.id}
+                        onClose={handleCloseModal}
+                        onBlogUpdated={onBlogUpdated}
+                    />
                 </div>
             </Modal>
         </>
