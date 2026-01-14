@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import type { BlogWithAuthor } from "../types/blogs";
 import BlogCard from "../components/BlogCard";
+import { useAppSelector } from "../hooks/store-hooks";
 
 const PAGE_SIZE = 10;
 
@@ -10,6 +11,7 @@ function Home() {
     const [currentPage, setCurrentPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const user = useAppSelector((state) => state.user.value);
 
     async function getBlogs(page: number): Promise<BlogWithAuthor[] | null> {
         const start = page * PAGE_SIZE;
@@ -38,6 +40,14 @@ function Home() {
 
         loadBlogs(currentPage);
     }, [currentPage]);
+
+    if (!user) {
+        return (
+            <div className="w-full h-screen flex flex-col items-center justify-center">
+                <p>Please log in to view the feed.</p>
+            </div>
+        )
+    }
 
     return (
         <div className="w-full flex flex-col gap-6 mt-8 mb-16">
