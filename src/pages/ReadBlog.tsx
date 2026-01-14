@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router'
+import { useParams, Link, useNavigate } from 'react-router'
 import { supabase } from '../supabaseClient'
 import type { BlogWithAuthor } from '../types/blogs'
 import { formatDate } from '../utils/formatDate'
@@ -10,10 +10,19 @@ import ConfirmDeleteBlogBtn from '../components/ConfirmDeleteBlogBtn'
 
 const ReadBlog = () => {
     const { id } = useParams<{ id: string }>()
+    const navigate = useNavigate()
     const user = useAppSelector((state) => state.user.value)
     const [blog, setBlog] = useState<BlogWithAuthor | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    const handleBlogUpdated = (updatedBlog: BlogWithAuthor) => {
+        setBlog(updatedBlog)
+    }
+
+    const handleBlogDeleted = () => {
+        navigate('/my-blogs')
+    }
 
     useEffect(() => {
         async function fetchBlog() {
@@ -29,7 +38,7 @@ const ReadBlog = () => {
             try {
                 const { data, error } = await supabase
                     .from('blogs')
-                    .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
+                    .select(`id, created_at, title, body, user_id, only_me, image, author:profile(display_name, avatar)`)
                     .eq('id', Number(id))
                     .single()
 
@@ -118,6 +127,12 @@ const ReadBlog = () => {
                     </div>
                 </header>
 
+                {blog.image && (
+                    <div className="mt-8">
+                        <img src={blog.image} alt={blog.title} className="w-full h-auto max-h-96 object-cover rounded-lg" />
+                    </div>
+                )}
+
                 <div className="mt-8">
                     <p className="text-slate-700 text-base leading-relaxed whitespace-pre-wrap">
                         {blog.body}
@@ -126,8 +141,8 @@ const ReadBlog = () => {
 
                 {isAuthor && (
                     <footer className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-end gap-3">
-                        <EditBlogModalBtn blog={blog} />
-                        <ConfirmDeleteBlogBtn blogId={blog.id} />
+                        <EditBlogModalBtn blog={blog} onBlogUpdated={handleBlogUpdated} />
+                        <ConfirmDeleteBlogBtn blogId={blog.id} onBlogDeleted={handleBlogDeleted} />
                     </footer>
                 )}
             </article>
