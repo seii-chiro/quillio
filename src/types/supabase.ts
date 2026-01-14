@@ -44,6 +44,7 @@ export type Database = {
           body: string
           created_at: string
           id: number
+          image: string | null
           only_me: boolean
           title: string
           user_id: string
@@ -52,6 +53,7 @@ export type Database = {
           body: string
           created_at?: string
           id?: number
+          image?: string | null
           only_me?: boolean
           title: string
           user_id?: string
@@ -60,6 +62,7 @@ export type Database = {
           body?: string
           created_at?: string
           id?: number
+          image?: string | null
           only_me?: boolean
           title?: string
           user_id?: string
@@ -76,16 +79,19 @@ export type Database = {
       }
       profile: {
         Row: {
+          avatar: string | null
           created_at: string
           display_name: string | null
           id: string
         }
         Insert: {
+          avatar?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
         }
         Update: {
+          avatar?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
