@@ -25,7 +25,8 @@ const MyBlogs = () => {
                 .from("blogs")
                 .select(`id, created_at, title, body, user_id, only_me, author:profile(display_name)`)
                 .eq('user_id', user?.id)
-                .range(start, end);
+                .range(start, end)
+                .order("created_at", { ascending: false });
             return data;
         }
 
@@ -47,9 +48,8 @@ const MyBlogs = () => {
 
     return (
         <div className="w-full flex flex-col gap-6 mt-8 mb-16">
-            <div className='w-full flex justify-between'>
+            <div className='w-full flex justify-between items-center'>
                 <h2 className="text-2xl font-semibold text-center">My Blogs</h2>
-
                 <CreateBlogModalBtn />
             </div>
 

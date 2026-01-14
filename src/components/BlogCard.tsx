@@ -44,7 +44,7 @@ const BlogCard = ({ blog, isInMyBlogs }: BlogCardProps) => {
                 </div>
             </header>
 
-            <p className="mt-4 text-sm text-slate-700">{body}</p>
+            <p className="mt-4 text-sm text-slate-700 line-clamp-3">{body}</p>
 
             <div className="mt-4 flex items-center justify-end gap-3">
                 {
