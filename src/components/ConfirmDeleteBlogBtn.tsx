@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { useState } from "react";
 import Modal from 'react-modal'
 import { IoTrashOutline } from "react-icons/io5";
-import { reloadWindow } from "../utils/reloadWindow";
 
 Modal.setAppElement('#root')
 
@@ -29,9 +28,10 @@ const customStyles: Modal.Styles = {
 
 type ConfirmDeleteBlogBtnProps = {
     blogId: number;
+    onBlogDeleted?: (blogId: number) => void;
 }
 
-const ConfirmDeleteBlogBtn = ({ blogId }: ConfirmDeleteBlogBtnProps) => {
+const ConfirmDeleteBlogBtn = ({ blogId, onBlogDeleted }: ConfirmDeleteBlogBtnProps) => {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
     const handleLogout = async () => {
@@ -48,7 +48,10 @@ const ConfirmDeleteBlogBtn = ({ blogId }: ConfirmDeleteBlogBtnProps) => {
 
         setShowConfirmDialog(false);
         toast.success("Blog deleted successfully");
-        reloadWindow()
+
+        if (onBlogDeleted) {
+            onBlogDeleted(blogId)
+        }
     }
 
     return (
