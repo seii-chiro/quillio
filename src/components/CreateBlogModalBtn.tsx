@@ -41,7 +41,7 @@ const CreateBlogModalBtn = () => {
                 onClick={() => setShowConfirmDialog(true)}
             >
                 <RiQuillPenAiLine />
-                Create New Blog
+                <span className="hidden sm:inline">Create New Blog</span>
             </button>
             <Modal
                 isOpen={showConfirmDialog}
