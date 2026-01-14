@@ -37,7 +37,7 @@ const ProtectedLayout = () => {
                 .from('profile')
                 .select("*")
                 .eq('id', user?.id)
-                .maybeSingle();
+                .single();
 
             if (error) {
                 toast.error(error.message)
@@ -68,7 +68,7 @@ const ProtectedLayout = () => {
             <Header>
                 <Navigation />
             </Header>
-            <main className="w-[60%] flex flex-col items-center">
+            <main className="w-[95%] lg:w-[60%] flex flex-col items-center">
                 <Outlet />
             </main>
 
