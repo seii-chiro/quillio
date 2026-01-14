@@ -1,6 +1,12 @@
-const Header = ({ children }: { children: React.ReactNode }) => {
+type HeaderProps = {
+    children: React.ReactNode;
+}
+
+const Header = ({ children }: HeaderProps) => {
     return (
-        <header className="w-full flex flex-col justify-center items-center p-4 sticky top-0">{children}</header>
+        <header className="w-full flex md:justify-center items-center p-2 sticky top-0">
+            {children}
+        </header>
     )
 }
 
