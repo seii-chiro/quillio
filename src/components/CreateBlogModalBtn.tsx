@@ -3,6 +3,7 @@ import Modal from 'react-modal'
 import CreateBlog from "./BlogForm";
 import { MdOutlineCancel } from "react-icons/md";
 import { RiQuillPenAiLine } from "react-icons/ri";
+import type { BlogWithAuthor } from "../types/blogs";
 
 Modal.setAppElement('#root')
 
@@ -26,7 +27,11 @@ const customStyles: Modal.Styles = {
     },
 };
 
-const CreateBlogModalBtn = () => {
+type CreateBlogModalBtnProps = {
+    onBlogCreated?: (blog: BlogWithAuthor) => void;
+}
+
+const CreateBlogModalBtn = ({ onBlogCreated }: CreateBlogModalBtnProps) => {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
     const handleCloseModal = () => {
@@ -58,7 +63,7 @@ const CreateBlogModalBtn = () => {
                             <MdOutlineCancel size={24} className="hover:text-red-600" />
                         </button>
                     </div>
-                    <CreateBlog onClose={handleCloseModal} />
+                    <CreateBlog onClose={handleCloseModal} onBlogCreated={onBlogCreated} />
                 </div>
             </Modal>
         </>
