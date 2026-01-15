@@ -75,7 +75,7 @@ const ProtectedLayout = () => {
     }, [navigate, dispatch, hasShownToast])
 
     return (
-        <div className="w-full h-full flex flex-col items-center relative">
+        <div className="w-full min-h-screen flex flex-col items-center relative">
             <Header>
                 <Navigation />
                 <HeaderProfile userProfile={userProfile} />

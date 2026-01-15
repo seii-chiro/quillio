@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       blogs: {
@@ -71,6 +46,84 @@ export type Database = {
           {
             foreignKeyName: "blogs_user_id_fkey1"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          blog_id: number
+          comment: string
+          comment_image: string | null
+          created_at: string
+          id: number
+          profile_id: string
+        }
+        Insert: {
+          blog_id: number
+          comment: string
+          comment_image?: string | null
+          created_at?: string
+          id?: number
+          profile_id: string
+        }
+        Update: {
+          blog_id?: number
+          comment?: string
+          comment_image?: string | null
+          created_at?: string
+          id?: number
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Comments_blog_id_fkey"
+            columns: ["blog_id"]
+            isOneToOne: false
+            referencedRelation: "blogs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Comments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      likes: {
+        Row: {
+          blog_id: number
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          blog_id: number
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          blog_id?: number
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_blog_id_fkey"
+            columns: ["blog_id"]
+            isOneToOne: false
+            referencedRelation: "blogs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profile"
             referencedColumns: ["id"]
@@ -232,9 +285,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },
