@@ -129,7 +129,7 @@ const ReadBlog = () => {
 
                 {blog.image && (
                     <div className="mt-8">
-                        <img src={blog.image} alt={blog.title} className="w-full h-auto max-h-96 object-cover rounded-lg" />
+                        <img src={blog.image} alt={blog.title} className="w-full h-auto max-h-96 object-contain rounded-lg" />
                     </div>
                 )}
 
