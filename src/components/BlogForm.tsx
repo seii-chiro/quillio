@@ -6,6 +6,7 @@ import { supabase } from "../supabaseClient"
 import { toast } from "sonner"
 import FormSubmitButton from "./styled-submit-btn"
 import { useAppSelector } from "../hooks/store-hooks"
+import { FaTrash } from "react-icons/fa"
 
 type CreateBlogProps = {
     id?: number;
@@ -199,7 +200,7 @@ const BlogForm = ({ id, title = "", body = "", only_me = false, image = null, is
                                 }}
                                 className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
                             >
-                                Remove
+                                <FaTrash size={12} />
                             </button>
                         </div>
                     )}
