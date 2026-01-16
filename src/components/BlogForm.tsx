@@ -226,7 +226,7 @@ const BlogForm = ({ id, title = "", body = "", only_me = false, image = null, is
                     </div>
                 </InputLabelGroup>
                 <div className="flex justify-end">
-                    <FormSubmitButton>
+                    <FormSubmitButton disabled={isSubmitting}>
                         {
                             isSubmitting ? btnLabelSubmitting : btnLabel
                         }
