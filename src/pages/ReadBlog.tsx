@@ -4,11 +4,13 @@ import { supabase } from '../supabaseClient'
 import type { BlogWithAuthor } from '../types/blogs'
 import type { CommentWithAuthor, CommentInsert } from '../types/comment'
 import { formatDate } from '../utils/formatDate'
-import { FaUser, FaCalendarAlt, FaLock, FaArrowLeft, FaTrash } from 'react-icons/fa'
+import { FaUser, FaCalendarAlt, FaLock, FaArrowLeft } from 'react-icons/fa'
 import { useAppSelector } from '../hooks/store-hooks'
 import EditBlogModalBtn from '../components/EditBlogModalBtn'
 import ConfirmDeleteBlogBtn from '../components/ConfirmDeleteBlogBtn'
 import { toast } from 'sonner'
+import CommentForm from '../components/CommentForm'
+import Comments from '../components/Comments'
 
 const ReadBlog = () => {
     const { id } = useParams<{ id: string }>()
@@ -296,120 +298,27 @@ const ReadBlog = () => {
                 )}
             </article>
 
-            {/* Comments Section */}
+
             <section className="bg-white rounded-lg shadow-md p-8 mt-8">
                 <h2 className="text-2xl font-bold text-slate-900 mb-6">
                     Comments ({comments.length})
                 </h2>
 
-                {/* Add Comment Form */}
-                <form onSubmit={handleAddComment} className="mb-8">
-                    <textarea
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        placeholder="Write a comment..."
-                        className="w-full border border-slate-300 rounded-lg p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
-                        rows={3}
-                        disabled={isSubmitting}
-                    />
+                <CommentForm
+                    handleAddComment={handleAddComment}
+                    commentText={commentText}
+                    setCommentText={setCommentText}
+                    commentImageFile={commentImageFile}
+                    setCommentImageFile={setCommentImageFile}
+                    isSubmitting={isSubmitting}
+                />
 
-                    <div className="mt-3">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Add Image (optional)
-                        </label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setCommentImageFile(e.target.files?.[0] || null)}
-                            className="block w-full text-sm text-slate-500
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-lg file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-sky-50 file:text-sky-700
-                                hover:file:bg-sky-100
-                                file:cursor-pointer cursor-pointer"
-                            disabled={isSubmitting}
-                        />
-                        {commentImageFile && (
-                            <div className="mt-3 relative inline-block">
-                                <img
-                                    src={URL.createObjectURL(commentImageFile)}
-                                    alt="Preview"
-                                    className="max-w-xs h-auto rounded-lg border border-slate-200"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setCommentImageFile(null)}
-                                    className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700"
-                                    disabled={isSubmitting}
-                                >
-                                    <FaTrash size={12} />
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isSubmitting || !commentText.trim()}
-                        className="mt-3 bg-sky-600 text-white px-6 py-2 rounded-lg hover:bg-sky-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
-                    >
-                        {isSubmitting ? 'Posting...' : 'Post Comment'}
-                    </button>
-                </form>
-
-                {/* Comments List */}
                 {loadingComments ? (
                     <p className="text-slate-500 text-center py-4">Loading comments...</p>
                 ) : comments.length === 0 ? (
                     <p className="text-slate-500 text-center py-8">No comments yet. Be the first to comment!</p>
                 ) : (
-                    <div className="space-y-4">
-                        {comments.map((comment) => {
-                            const isCommentAuthor = user?.id === comment.profile_id
-                            const commentAuthorName = comment.author?.display_name ?? 'Unknown'
-
-                            return (
-                                <div
-                                    key={comment.id}
-                                    className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <span className="font-semibold text-slate-900">
-                                                    {commentAuthorName}
-                                                </span>
-                                                <span className="text-sm text-slate-500">
-                                                    {formatDate(comment.created_at)}
-                                                </span>
-                                            </div>
-                                            <p className="text-slate-700 whitespace-pre-wrap">
-                                                {comment.comment}
-                                            </p>
-                                            {comment.comment_image && (
-                                                <img
-                                                    src={comment.comment_image}
-                                                    alt="Comment attachment"
-                                                    className="mt-3 max-w-md w-full h-auto rounded-lg border border-slate-200"
-                                                />
-                                            )}
-                                        </div>
-
-                                        {isCommentAuthor && (
-                                            <button
-                                                onClick={() => handleDeleteComment(comment.id)}
-                                                className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded transition-colors"
-                                                title="Delete comment"
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                    <Comments comments={comments} user={user} handleDeleteComment={handleDeleteComment} />
                 )}
             </section>
         </div>
