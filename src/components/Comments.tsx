@@ -31,7 +31,7 @@ const Comments = ({ comments, user, handleDeleteComment }: CommentsProps) => {
                                     <span className="hidden md:block text-sm text-slate-500">
                                         {formatDate(comment.created_at)}
                                     </span>
-                                    <span className="md:hidden text-sm text-slate-500">
+                                    <span className="md:hidden text-sm text-slate-500 line-clamp-3">
                                         {formatDateShort(comment.created_at)}
                                     </span>
                                 </div>
