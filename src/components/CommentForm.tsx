@@ -9,6 +9,8 @@ type CommentFormProps = {
     commentImageFile: File | null;
     setCommentImageFile: React.Dispatch<React.SetStateAction<File | null>>;
     isSubmitting: boolean;
+    isEditMode?: boolean;
+    onCancel?: () => void;
 }
 
 const CommentForm = ({
@@ -17,10 +19,12 @@ const CommentForm = ({
     setCommentText,
     commentImageFile,
     setCommentImageFile,
-    isSubmitting
+    isSubmitting,
+    isEditMode = false,
+    onCancel
 }: CommentFormProps) => {
     return (
-        <form onSubmit={handleAddComment} className="mb-8">
+        <form onSubmit={handleAddComment} className={isEditMode ? "space-y-3" : "mb-8"}>
             <textarea
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
@@ -32,7 +36,7 @@ const CommentForm = ({
 
             <InputLabelGroup>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Add Image (optional)
+                    {isEditMode ? 'Update Image (optional)' : 'Add Image (optional)'}
                 </label>
                 <input
                     type="file"
@@ -60,11 +64,31 @@ const CommentForm = ({
                 )}
             </InputLabelGroup>
 
-            <FormSubmitButton
-                disabled={isSubmitting || !commentText.trim()}
-            >
-                {isSubmitting ? 'Posting...' : 'Post Comment'}
-            </FormSubmitButton>
+            {isEditMode ? (
+                <div className="flex items-center gap-2">
+                    <button
+                        type="submit"
+                        disabled={isSubmitting || !commentText.trim()}
+                        className="flex items-center gap-2 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        {isSubmitting ? 'Updating...' : 'Save'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        disabled={isSubmitting}
+                        className="flex items-center gap-2 bg-slate-500 text-white px-4 py-2 rounded-lg hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            ) : (
+                <FormSubmitButton
+                    disabled={isSubmitting || !commentText.trim()}
+                >
+                    {isSubmitting ? 'Posting...' : 'Post Comment'}
+                </FormSubmitButton>
+            )}
         </form>
     )
 }

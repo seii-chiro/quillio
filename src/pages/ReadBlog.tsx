@@ -24,6 +24,9 @@ const ReadBlog = () => {
     const [commentImageFile, setCommentImageFile] = useState<File | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [loadingComments, setLoadingComments] = useState(false)
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+    const [editCommentText, setEditCommentText] = useState('')
+    const [editCommentImageFile, setEditCommentImageFile] = useState<File | null>(null)
 
     const handleBlogUpdated = (updatedBlog: BlogWithAuthor) => {
         setBlog(updatedBlog)
@@ -166,6 +169,93 @@ const ReadBlog = () => {
         } catch (err) {
             toast.error('Failed to delete comment')
             console.error(err)
+        }
+    }
+
+    const handleStartEditComment = (commentId: number, currentText: string) => {
+        setEditingCommentId(commentId)
+        setEditCommentText(currentText)
+        setEditCommentImageFile(null)
+    }
+
+    const handleCancelEdit = () => {
+        setEditingCommentId(null)
+        setEditCommentText('')
+        setEditCommentImageFile(null)
+    }
+
+    const handleUpdateComment = async (commentId: number) => {
+        if (!editCommentText.trim()) {
+            toast.error('Comment cannot be empty')
+            return
+        }
+
+        if (!user?.id) {
+            toast.error('You must be logged in to edit comments')
+            return
+        }
+
+        setIsSubmitting(true)
+        try {
+            let imageUrl: string | null = null
+
+            if (editCommentImageFile) {
+                const fileExt = editCommentImageFile.name.split('.').pop()
+                const fileName = `${user.id}-${Date.now()}.${fileExt}`
+                const filePath = `private/${user.id}/${fileName}`
+
+                const { error: uploadError } = await supabase.storage
+                    .from('comment_images')
+                    .upload(filePath, editCommentImageFile)
+
+                if (uploadError) {
+                    toast.error('Failed to upload image')
+                    console.error(uploadError)
+                    setIsSubmitting(false)
+                    return
+                }
+
+                const { data, error: urlError } = await supabase.storage
+                    .from('comment_images')
+                    .createSignedUrl(filePath, 60 * 60 * 24 * 365)
+
+                if (urlError || !data) {
+                    toast.error('Failed to generate image URL')
+                    console.error(urlError)
+                    setIsSubmitting(false)
+                    return
+                }
+
+                imageUrl = data.signedUrl
+            }
+
+            const updateData: { comment: string; comment_image?: string | null } = {
+                comment: editCommentText.trim()
+            }
+
+            if (editCommentImageFile) {
+                updateData.comment_image = imageUrl
+            }
+
+            const { error } = await supabase
+                .from('comments')
+                .update(updateData)
+                .eq('id', commentId)
+
+            if (error) {
+                toast.error('Failed to update comment')
+                console.error(error)
+                return
+            }
+
+            toast.success('Comment updated')
+            handleCancelEdit()
+            await fetchComments()
+        } catch (err) {
+            toast.error('Failed to update comment')
+            console.error(err)
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -318,7 +408,20 @@ const ReadBlog = () => {
                 ) : comments.length === 0 ? (
                     <p className="text-slate-500 text-center py-8">No comments yet. Be the first to comment!</p>
                 ) : (
-                    <Comments comments={comments} user={user} handleDeleteComment={handleDeleteComment} />
+                    <Comments 
+                        comments={comments} 
+                        user={user} 
+                        handleDeleteComment={handleDeleteComment}
+                        editingCommentId={editingCommentId}
+                        editCommentText={editCommentText}
+                        setEditCommentText={setEditCommentText}
+                        editCommentImageFile={editCommentImageFile}
+                        setEditCommentImageFile={setEditCommentImageFile}
+                        handleStartEditComment={handleStartEditComment}
+                        handleCancelEdit={handleCancelEdit}
+                        handleUpdateComment={handleUpdateComment}
+                        isSubmitting={isSubmitting}
+                    />
                 )}
             </section>
         </div>
