@@ -14,7 +14,9 @@ type CommentsProps = {
     setEditCommentText: React.Dispatch<React.SetStateAction<string>>;
     editCommentImageFile: File | null;
     setEditCommentImageFile: React.Dispatch<React.SetStateAction<File | null>>;
-    handleStartEditComment: (commentId: number, currentText: string) => void;
+    editExistingImageUrl: string | null;
+    handleRemoveExistingImage: () => void;
+    handleStartEditComment: (commentId: number, currentText: string, currentImageUrl?: string | null) => void;
     handleCancelEdit: () => void;
     handleUpdateComment: (commentId: number) => void;
     isSubmitting: boolean;
@@ -29,6 +31,8 @@ const Comments = ({
     setEditCommentText,
     editCommentImageFile,
     setEditCommentImageFile,
+    editExistingImageUrl,
+    handleRemoveExistingImage,
     handleStartEditComment,
     handleCancelEdit,
     handleUpdateComment,
@@ -69,6 +73,8 @@ const Comments = ({
                                         setCommentText={setEditCommentText}
                                         commentImageFile={editCommentImageFile}
                                         setCommentImageFile={setEditCommentImageFile}
+                                        existingImageUrl={editExistingImageUrl}
+                                        onRemoveExistingImage={handleRemoveExistingImage}
                                         isSubmitting={isSubmitting}
                                         isEditMode={true}
                                         onCancel={handleCancelEdit}
@@ -92,7 +98,7 @@ const Comments = ({
                             {isCommentAuthor && editingCommentId !== comment.id && (
                                 <div className="flex items-center gap-2">
                                     <button
-                                        onClick={() => handleStartEditComment(comment.id, comment.comment)}
+                                        onClick={() => handleStartEditComment(comment.id, comment.comment, comment.comment_image)}
                                         className="text-sky-600 hover:text-sky-700 p-2 hover:bg-sky-50 rounded transition-colors"
                                         title="Edit comment"
                                     >

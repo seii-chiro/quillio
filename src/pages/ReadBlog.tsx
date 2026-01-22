@@ -27,6 +27,8 @@ const ReadBlog = () => {
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
     const [editCommentText, setEditCommentText] = useState('')
     const [editCommentImageFile, setEditCommentImageFile] = useState<File | null>(null)
+    const [editExistingImageUrl, setEditExistingImageUrl] = useState<string | null>(null)
+    const [removeExistingImage, setRemoveExistingImage] = useState(false)
 
     const handleBlogUpdated = (updatedBlog: BlogWithAuthor) => {
         setBlog(updatedBlog)
@@ -172,16 +174,20 @@ const ReadBlog = () => {
         }
     }
 
-    const handleStartEditComment = (commentId: number, currentText: string) => {
+    const handleStartEditComment = (commentId: number, currentText: string, currentImageUrl?: string | null) => {
         setEditingCommentId(commentId)
         setEditCommentText(currentText)
         setEditCommentImageFile(null)
+        setEditExistingImageUrl(currentImageUrl || null)
+        setRemoveExistingImage(false)
     }
 
     const handleCancelEdit = () => {
         setEditingCommentId(null)
         setEditCommentText('')
         setEditCommentImageFile(null)
+        setEditExistingImageUrl(null)
+        setRemoveExistingImage(false)
     }
 
     const handleUpdateComment = async (commentId: number) => {
@@ -235,6 +241,8 @@ const ReadBlog = () => {
 
             if (editCommentImageFile) {
                 updateData.comment_image = imageUrl
+            } else if (removeExistingImage) {
+                updateData.comment_image = null
             }
 
             const { error } = await supabase
@@ -417,6 +425,11 @@ const ReadBlog = () => {
                         setEditCommentText={setEditCommentText}
                         editCommentImageFile={editCommentImageFile}
                         setEditCommentImageFile={setEditCommentImageFile}
+                        editExistingImageUrl={editExistingImageUrl}
+                        handleRemoveExistingImage={() => {
+                            setRemoveExistingImage(true)
+                            setEditExistingImageUrl(null)
+                        }}
                         handleStartEditComment={handleStartEditComment}
                         handleCancelEdit={handleCancelEdit}
                         handleUpdateComment={handleUpdateComment}
