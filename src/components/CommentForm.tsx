@@ -11,6 +11,8 @@ type CommentFormProps = {
     isSubmitting: boolean;
     isEditMode?: boolean;
     onCancel?: () => void;
+    existingImageUrl?: string | null;
+    onRemoveExistingImage?: () => void;
 }
 
 const CommentForm = ({
@@ -21,7 +23,9 @@ const CommentForm = ({
     setCommentImageFile,
     isSubmitting,
     isEditMode = false,
-    onCancel
+    onCancel,
+    existingImageUrl = null,
+    onRemoveExistingImage
 }: CommentFormProps) => {
     return (
         <form onSubmit={handleAddComment} className={isEditMode ? "space-y-3" : "mb-8"}>
@@ -45,16 +49,22 @@ const CommentForm = ({
                     className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-0 focus:border-black"
                     disabled={isSubmitting}
                 />
-                {commentImageFile && (
+                {(commentImageFile || existingImageUrl) && (
                     <div className="mt-3 relative inline-block">
                         <img
-                            src={URL.createObjectURL(commentImageFile)}
+                            src={commentImageFile ? URL.createObjectURL(commentImageFile) : existingImageUrl!}
                             alt="Preview"
                             className="max-w-xs h-auto rounded-lg border object-contain border-slate-200"
                         />
                         <button
                             type="button"
-                            onClick={() => setCommentImageFile(null)}
+                            onClick={() => {
+                                if (commentImageFile) {
+                                    setCommentImageFile(null)
+                                } else if (onRemoveExistingImage) {
+                                    onRemoveExistingImage()
+                                }
+                            }}
                             className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700"
                             disabled={isSubmitting}
                         >
